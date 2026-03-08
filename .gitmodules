@@ -1,0 +1,3 @@
+[submodule "extern_libary/libftx"]
+	path = extern_libary/libftx
+	url = git@github.com:RJW-db/libftx.git
