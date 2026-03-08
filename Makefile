@@ -32,55 +32,48 @@ EXT_INC			:=	$(EXT_LIB)/$(INC_DIR)
 LIBFTX_OBJ_DIR	:=	$(BUILD_DIR)/libftx
 LIB_A			:=	libftx.a
 
-BNS				:=	main_bonus.c				checker.c
 
-PUSH_SWAP		:=	main.c		ps_nodes.c					ps_commands.c					ps_to_b.c	\
+SRC				:=	ps_nodes.c					ps_commands.c					ps_to_b.c	\
 					ps_to_b_2.c					ps_to_a.c						ps_utils.c	\
 					ps_utils_2.c				ps_utils_3.c
 
+MANDATORY		:=	main.c
+BNS				:=	main_bonus.c				checker.c
+
 # Generate source file names
-SRC				:=	$(addprefix $(SRC_DIR)/, $(PUSH_SWAP))
+SRC				:=	$(addprefix $(SRC_DIR)/, $(SRC))
+MSRC			:=	$(addprefix $(SRC_DIR)/, $(MANDATORY))
+BSRC			:=	$(addprefix $(SRC_DIR)/, $(BNS))
 
 # Generate object file names
 OBJ				:=	$(SRC:%.c=$(BUILD_DIR)/%.o)
+MOBJ			:=	$(MSRC:%.c=$(BUILD_DIR)/%.o)
+BOBJ			:=	$(BSRC:%.c=$(BUILD_DIR)/%.o)
 
 # Generate Dependency files
-DEPS			:=	$(OBJ:.o=.d)
-
+DEPS			:=	$(OBJ:.o=.d) $(MOBJ:.o=.d) $(BOBJ:.o=.d)
 
 DELETE			:=	*.out			**/*.out			.DS_Store	\
 					**/.DS_Store	.dSYM/				**/.dSYM/
 
+INCLUDES		:=	-I $(INC_DIR) -I $(EXT_INC)
+BUILD			:=	$(COMPILER) -I $(INC_DIR) -I $(EXT_INC) $(CFLAGS)
+
 all: $(NAME)
 
-# $(NAME): libftx $(OBJ)
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) $(MOBJ) | libftx
+	@$(BUILD) $(OBJ) $(MOBJ) $(EXT_LIB)/libftx.a -o $(NAME)
 	@printf "$(CREATED)" $@ $(CUR_DIR)
 
-# $(NAME): $(OBJ)
-# 	@cc $(CFLAGS) $(OBJ) -o $(NAME)
+$(BNS_NAME): $(OBJ) $(BOBJ) | libftx
+	@$(BUILD) $(OBJ) $(BOBJ) $(EXT_LIB)/libftx.a -o $(BNS_NAME)
+	@printf "$(CREATED)" $@ $(CUR_DIR)
 
-# $(BNS_NAME): $(BOBJ)
-# 	@cc $(CFLAGS) $(BOBJ) -o $(BNS_NAME)
-
-# $(NAME): libftx $(OBJ)
-# 	mkdir -p $(LIBFTX_OBJ_DIR)
-# 	cd $(LIBFTX_OBJ_DIR) && ar x ../../$(EXT_LIB)/$(LIB_A)
-# 	ar rcs $(NAME) $(OBJ) $(LIBFTX_OBJ_DIR)/*.o
-# 	@printf "$(CREATED)" $@ $(CUR_DIR)
-
-# $(BUILD_DIR)/%.o: %.c
 $(BUILD_DIR)/%.o: %.c | libftx
 	@mkdir -p $(@D)
 	$(COMPILER) $(CFLAGS) -I $(INC_DIR) -I $(EXT_INC) -c $< -o $@
 
-# $(CLONE_LIBFTX) is set to nothing when dbltoa is used as a submodule in libftx,
-# preventing nested cloning of libftx inside dbltoa.
-# libftx:
-# 	$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) $(LIB_A) gnl $(filter debug,$(MAKECMDGOALS))
-
-# $(EXT_LIB)/.git:
-# 	git clone git@github.com:RJW-db/libftx.git $(EXT_LIB)
+bonus: $(BNS_NAME)
 
 $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git:
 	git submodule update --init extern_libary/libftx
@@ -89,7 +82,7 @@ $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git:
 		git checkout $$(git config -f $(abspath $(EXT_LIB))/.gitmodules submodule.src/get_next_line.branch || echo main)
 
 libftx: | $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git
-	@$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) SUBMODULES_CMD= $(LIB_A) gnl $(filter debug,$(MAKECMDGOALS))
+	@$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) SUBMODULES_CMD= gnl $(LIB_A) $(filter debug,$(MAKECMDGOALS))
 
 clean:
 	@$(RM) $(BUILD_DIR) $(DELETE)
@@ -100,20 +93,9 @@ fclean: clean
 	@$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) fclean;
 	@printf "$(REMOVED)" $(NAME) $(CUR_DIR)
 
-
-# clean:
-# 	@$(RM) $(BUILD_DIR) $(DELETE)
-# 	@printf "$(REMOVED)" $(BUILD_DIR) $(CUR_DIR)$(BUILD_DIR)
-
-# fclean: clean
-# 	@$(RM) $(NAME)
-# # 	@rm -f $(INC_DIR)/libftx.h
-# 	@printf "$(REMOVED)" $(NAME) $(CUR_DIR)
-
 re: fclean all
 
-# Submodule: skip `all` to avoid parallel conflicts. Standalone: triggers `all`.
-debug: $(if $(and $(CLONE_LIBFTX),$(filter debug,$(MAKECMDGOALS))),all)
+debug: all
 
 print-%:
 	$(info $($*))
