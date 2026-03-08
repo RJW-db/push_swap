@@ -31,7 +31,7 @@ int	push_to_top(t_node **from, t_node **to, char *str)
 	}
 	*from = head;
 	if (str != NULL)
-		(void)write(STDOUT_FILENO, str, ft_strlen(str));
+		safe_write(STDOUT_FILENO, str, ft_strlen(str));
 	return (1);
 }
 
@@ -46,7 +46,7 @@ void	swap_top_2(t_node **head, char *str)
 	tmp->next = (*head);
 	(*head) = tmp;
 	if (str != NULL)
-		(void)write(STDOUT_FILENO, str, ft_strlen(str));
+		safe_write(STDOUT_FILENO, str, ft_strlen(str));
 }
 
 void	first_to_last(t_node **first_to_last, char *str)
@@ -64,7 +64,7 @@ void	first_to_last(t_node **first_to_last, char *str)
 	(*first_to_last)->next = NULL;
 	(*first_to_last) = new_head;
 	if (str != NULL)
-		(void)write(STDOUT_FILENO, str, ft_strlen(str));
+		safe_write(STDOUT_FILENO, str, ft_strlen(str));
 }
 
 void	last_to_first(t_node **last_to_first, char *str)
@@ -82,7 +82,7 @@ void	last_to_first(t_node **last_to_first, char *str)
 	tmp->next = NULL;
 	(*last_to_first) = new_head;
 	if (str != NULL)
-		(void)write(STDOUT_FILENO, str, ft_strlen(str));
+		safe_write(STDOUT_FILENO, str, ft_strlen(str));
 }
 
 void	use_commands(t_swap *s, t_node **a, t_node **b)
@@ -91,13 +91,13 @@ void	use_commands(t_swap *s, t_node **a, t_node **b)
 	{
 		first_to_last(a, NULL);
 		first_to_last(b, NULL);
-		(void)write(1, "rr\n", 3);
+		safe_write(STDOUT_FILENO, "rr\n", 3);
 	}
 	while (s->optimal.rrr-- > 0)
 	{
 		last_to_first(a, NULL);
 		last_to_first(b, NULL);
-		(void)write(1, "rrr\n", 4);
+		safe_write(STDOUT_FILENO, "rrr\n", 4);
 	}
 	while (s->optimal.ra-- > 0)
 		first_to_last(a, "ra\n");

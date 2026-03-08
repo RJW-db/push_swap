@@ -26,7 +26,7 @@ void	free_linked_list(t_node *stack)
 
 int	error_handling(t_node *full_stack)
 {
-	(void)write(STDERR_FILENO, "Error\n", 6);
+	safe_write(STDERR_FILENO, "Error\n", 6);
 	free_linked_list(full_stack);
 	return (EXIT_FAILURE);
 }
