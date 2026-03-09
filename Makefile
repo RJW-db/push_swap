@@ -31,6 +31,7 @@ EXT_LIB			:=	$(EXT_DIR)/libftx
 EXT_INC			:=	$(EXT_LIB)/$(INC_DIR)
 LIBFTX_OBJ_DIR	:=	$(BUILD_DIR)/libftx
 LIB_A			:=	libftx.a
+LIBFTX_PATH		:=	$(EXT_LIB)/$(LIB_A)
 
 SRC				:=	ps_nodes.c					ps_commands.c					ps_to_b.c	\
 					ps_to_b_2.c					ps_to_a.c						ps_utils.c	\
@@ -60,8 +61,7 @@ BUILD			:=	$(COMPILER) -I $(INC_DIR) -I $(EXT_INC) $(CFLAGS)
 
 all: $(NAME)
 
-# Ensure libftx headers exist before compiling any object
-$(OBJ) $(MOBJ) $(BOBJ): | libftx
+$(OBJ) $(MOBJ) $(BOBJ): | $(LIBFTX_PATH)
 
 $(NAME): $(OBJ) $(MOBJ)
 	@$(BUILD) $(OBJ) $(MOBJ) $(EXT_LIB)/libftx.a -o $(NAME)
@@ -75,16 +75,16 @@ $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(@D)
 	$(COMPILER) $(CFLAGS) -I $(INC_DIR) -I $(EXT_INC) -c $< -o $@
 
-bonus: $(BNS_NAME)
-
 $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git:
 	git submodule update --init extern_libary/libftx
 	cd $(EXT_LIB) && git submodule update --init src/get_next_line
 	cd $(EXT_LIB)/src/get_next_line && \
 		git checkout $$(git config -f $(abspath $(EXT_LIB))/.gitmodules submodule.src/get_next_line.branch || echo main)
 
-libftx: | $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git
+$(LIBFTX_PATH): | $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git
 	@$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) SUBMODULES_CMD= gnl $(LIB_A) $(filter debug,$(MAKECMDGOALS))
+
+bonus: $(BNS_NAME)
 
 clean:
 	@$(RM) $(BUILD_DIR) $(DELETE)
