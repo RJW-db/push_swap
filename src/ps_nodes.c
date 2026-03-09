@@ -6,7 +6,7 @@
 /*   By: rde-brui <rde-brui@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/03/13 17:33:40 by rde-brui      #+#    #+#                 */
-/*   Updated: 2026/03/06 18:11:41 by rde-brui      ########   odam.nl         */
+/*   Updated: 2026/03/09 14:51:11 by rde-brui      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,10 +87,11 @@ static bool	strict_atoi(const char *nptr, int *value)
 	sign = 1;
 	if (*nptr == '\0')
 		return (0);
-	if (*nptr == '-' || *nptr == '+') {
-        if (*nptr++ == '-')
-            sign = -1;
-    }
+	if (*nptr == '-' || *nptr == '+')
+	{
+		if (*nptr++ == '-')
+			sign = -1;
+	}
 	if (*nptr == '\0' || *nptr == '-' || *nptr == '+')
 		return (false);
 	while (*nptr >= '0' && *nptr <= '9'

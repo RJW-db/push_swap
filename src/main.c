@@ -6,7 +6,7 @@
 /*   By: rde-brui <rde-brui@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/01/29 21:11:24 by rde-brui      #+#    #+#                 */
-/*   Updated: 2026/03/06 16:45:28 by rde-brui      ########   odam.nl         */
+/*   Updated: 2026/03/09 14:44:40 by rde-brui      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	main(int argc, char **argv)
 {
 	t_swap	swap;
 
-	ft_memset(&swap.optimal, 0, sizeof(t_moves));
+	ft_memset(&swap, 0, sizeof(t_moves));
 	if (argc == 1)
 		return (error_handling(&swap));
 	if (nodes(argc - 1, argv + 1, &swap) == false)
