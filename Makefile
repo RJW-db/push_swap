@@ -100,7 +100,6 @@ re:
 	$(MAKE) $(PRINT_NO_DIR) all
 
 bre:
-	$(MAKE) $(PRINT_NO_DIR) fclean -C $(EXT_LIB);
 	$(MAKE) $(PRINT_NO_DIR) fclean
 	$(MAKE) $(PRINT_NO_DIR) bonus
 
