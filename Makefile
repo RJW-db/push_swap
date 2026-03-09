@@ -57,7 +57,7 @@ DELETE			:=	*.out			**/*.out			.DS_Store	\
 					**/.DS_Store	.dSYM/				**/.dSYM/
 
 INCLUDES		:=	-I $(INC_DIR) -I $(EXT_INC)
-BUILD			:=	$(COMPILER) -I $(INC_DIR) -I $(EXT_INC) $(CFLAGS)
+BUILD			:=	$(COMPILER) $(INCLUDES) $(CFLAGS)
 
 all: $(NAME)
 
