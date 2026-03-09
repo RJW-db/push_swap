@@ -32,7 +32,6 @@ EXT_INC			:=	$(EXT_LIB)/$(INC_DIR)
 LIBFTX_OBJ_DIR	:=	$(BUILD_DIR)/libftx
 LIB_A			:=	libftx.a
 
-
 SRC				:=	ps_nodes.c					ps_commands.c					ps_to_b.c	\
 					ps_to_b_2.c					ps_to_a.c						ps_utils.c	\
 					ps_utils_2.c				ps_utils_3.c
@@ -113,7 +112,7 @@ print-%:
 
 -include $(DEPS)
 
-.PHONY:	all bonus libftx submodule_build submodule clean fclean re debug print-%
+.PHONY:	all bonus libftx submodule_build submodule clean fclean re bre debug print-%
 
 # Terminal markup
 BOLD			:=	\033[1m
