@@ -50,9 +50,6 @@ OBJ				:=	$(SRC:%.c=$(BUILD_DIR)/%.o)
 MOBJ			:=	$(MSRC:%.c=$(BUILD_DIR)/%.o)
 BOBJ			:=	$(BSRC:%.c=$(BUILD_DIR)/%.o)
 
-# Ensure libftx headers exist before compiling any object
-$(OBJ) $(MOBJ) $(BOBJ): | libftx
-
 # Generate Dependency files
 DEPS			:=	$(OBJ:.o=.d) $(MOBJ:.o=.d) $(BOBJ:.o=.d)
 
@@ -64,7 +61,10 @@ BUILD			:=	$(COMPILER) -I $(INC_DIR) -I $(EXT_INC) $(CFLAGS)
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(MOBJ) | libftx
+# Ensure libftx headers exist before compiling any object
+$(OBJ) $(MOBJ) $(BOBJ): | libftx
+
+$(NAME): $(OBJ) $(MOBJ)
 	@$(BUILD) $(OBJ) $(MOBJ) $(EXT_LIB)/libftx.a -o $(NAME)
 	@printf "$(CREATED)" $@ $(CUR_DIR)
 
@@ -96,7 +96,15 @@ fclean: clean
 	@$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) fclean;
 	@printf "$(REMOVED)" $(NAME) $(CUR_DIR)
 
-re: fclean all
+re:
+	$(MAKE) $(PRINT_NO_DIR) fclean -C $(EXT_LIB);
+	$(MAKE) $(PRINT_NO_DIR) fclean
+	$(MAKE) $(PRINT_NO_DIR) all
+
+bre:
+	$(MAKE) $(PRINT_NO_DIR) fclean -C $(EXT_LIB);
+	$(MAKE) $(PRINT_NO_DIR) fclean
+	$(MAKE) $(PRINT_NO_DIR) bonus
 
 debug: all
 

@@ -7,10 +7,10 @@
 - [Algorithm](#algorithm)
 - [Benchmark](#benchmark)
 - [Project Rules (42 Subject)](#project-rules-42-subject)
-- [Usage](#usage)
-- [Mandatory](#bonus)
-- [Bonus](#bonus)
 - [Build](#build)
+- [Usage](#usage)
+- [Bonus: checker](#bonus-checker)
+- [Resources](#resources)
 
 ## Description
 You have two stacks (`a` and `b`) and a fixed set of instructions to manipulate them.
@@ -97,9 +97,12 @@ Note: the bonus part is only evaluated if the mandatory part scores perfectly, i
 Build the static library:
 
 ```sh
-make        # build printf.a
+make        # build push_swap
+make bonus  # build checker
 make clean  # remove build artifacts
-make fclean # clean + remove printf.a (and extern deps)
+make fclean # clean + remove push_swap checker (and extern deps)
+make re     # fclean + build
+make bre    # fclean + build + bonus
 make debug  # debug flags + sanitizers (per Makefile)
 ```
 
@@ -110,9 +113,9 @@ Sort a list of integers:
 
 ```
 ./push_swap 2 1 3 6 5 8
-sa
 pb
 pb
+rb
 pb
 sa
 pa
@@ -124,7 +127,6 @@ Check the number of operations generated:
 
 ```
 ARG="4 67 3 87 23"; ./push_swap $ARG | wc -l
-6
 ```
 
 Validate the output with the provided checker:
@@ -146,9 +148,15 @@ Error cases:
 ./push_swap 0 one 2 3
 Error
 
-./push_swap 2 2 3
+./push_swap 1 +1 -1
 Error
 
 ./push_swap 2147483648
 Error
 ```
+
+## Resources
+
+- [push_swap visualizer](https://github.com/o-reo/push_swap_visualizer): real-time visual debugging tool for watching your algorithm sort step by step.
+- [push_swap tester by gemartin99](https://github.com/gemartin99/Push-Swap-Tester): automated stress tester for validating operation counts across many random inputs.
+- [push_swap ProChecker by ailopez-o](https://github.com/ailopez-o/42Barcelona-PushSwap-ProChecker): extended checker with detailed feedback for validating correctness and performance.
