@@ -87,8 +87,10 @@ static bool	strict_atoi(const char *nptr, int *value)
 	sign = 1;
 	if (*nptr == '\0')
 		return (0);
-	if (*nptr == '-' || *nptr == '+')
-		sign = 0L - (long)(*nptr++ == '-');
+	if (*nptr == '-' || *nptr == '+') {
+        if (*nptr++ == '-')
+            sign = -1;
+    }
 	if (*nptr == '\0' || *nptr == '-' || *nptr == '+')
 		return (false);
 	while (*nptr >= '0' && *nptr <= '9'

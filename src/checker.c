@@ -14,9 +14,9 @@
 #include "get_next_line.h"
 
 static t_commands	valid_input_check(char *line);
-static void         apply_instruction(t_swap *swap, t_commands command_check);
+static void			apply_instruction(t_swap *swap, t_commands command_check);
 
-void	parsing_and_applying_instructions(t_swap *swap)
+bool	parsing_and_applying_instructions(t_swap *swap)
 {
 	t_commands	command_check;
 	char		*line;
@@ -29,13 +29,10 @@ void	parsing_and_applying_instructions(t_swap *swap)
 		command_check = valid_input_check(line);
 		free(line);
 		if (command_check == FALSE_INPUT)
-		{
-			free_linked_list(swap->a);
-			safe_write(STDERR_FILENO, "Error\n", 6);
-			exit (EXIT_FAILURE);
-		}
+			return (false);
 		apply_instruction(swap, command_check);
 	}
+	return (true);
 }
 
 static t_commands	valid_input_check(char *line)

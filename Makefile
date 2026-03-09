@@ -50,6 +50,9 @@ OBJ				:=	$(SRC:%.c=$(BUILD_DIR)/%.o)
 MOBJ			:=	$(MSRC:%.c=$(BUILD_DIR)/%.o)
 BOBJ			:=	$(BSRC:%.c=$(BUILD_DIR)/%.o)
 
+# Ensure libftx headers exist before compiling any object
+$(OBJ) $(MOBJ) $(BOBJ): | libftx
+
 # Generate Dependency files
 DEPS			:=	$(OBJ:.o=.d) $(MOBJ:.o=.d) $(BOBJ:.o=.d)
 
@@ -65,11 +68,11 @@ $(NAME): $(OBJ) $(MOBJ) | libftx
 	@$(BUILD) $(OBJ) $(MOBJ) $(EXT_LIB)/libftx.a -o $(NAME)
 	@printf "$(CREATED)" $@ $(CUR_DIR)
 
-$(BNS_NAME): $(OBJ) $(BOBJ) | libftx
+$(BNS_NAME): $(BOBJ) | $(NAME)
 	@$(BUILD) $(OBJ) $(BOBJ) $(EXT_LIB)/libftx.a -o $(BNS_NAME)
 	@printf "$(CREATED)" $@ $(CUR_DIR)
 
-$(BUILD_DIR)/%.o: %.c | libftx
+$(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(@D)
 	$(COMPILER) $(CFLAGS) -I $(INC_DIR) -I $(EXT_INC) -c $< -o $@
 
@@ -89,7 +92,7 @@ clean:
 	@printf "$(REMOVED)" $(BUILD_DIR) $(CUR_DIR)$(BUILD_DIR)
 
 fclean: clean
-	@$(RM) $(NAME)
+	@$(RM) $(NAME) $(BNS_NAME)
 	@$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) fclean;
 	@printf "$(REMOVED)" $(NAME) $(CUR_DIR)
 
@@ -102,7 +105,7 @@ print-%:
 
 -include $(DEPS)
 
-.PHONY:	all libftx submodule_build submodule clean fclean re debug print-%
+.PHONY:	all bonus libftx submodule_build submodule clean fclean re debug print-%
 
 # Terminal markup
 BOLD			:=	\033[1m

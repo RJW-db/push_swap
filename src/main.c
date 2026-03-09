@@ -18,9 +18,9 @@ int	main(int argc, char **argv)
 
 	ft_memset(&swap.optimal, 0, sizeof(t_moves));
 	if (argc == 1)
-		return (error_handling(swap.a));
+		return (error_handling(&swap));
 	if (nodes(argc - 1, argv + 1, &swap) == false)
-		return (error_handling(swap.a));
+		return (error_handling(&swap));
 	if (argc == 3 && swap.a->value > swap.a->next->value)
 		swap_top_2(&swap.a, "sa\n");
 	else if (argc == 4)

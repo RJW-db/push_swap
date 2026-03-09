@@ -31,10 +31,6 @@ typedef enum e_commands
 	SS
 }		t_commands;
 
-//	main_bonus.c
-int		main(int argc, char **argv);
-
-//	checker.c
-void	parsing_and_applying_instructions(t_swap *swap);
+bool	parsing_and_applying_instructions(t_swap *swap);
 
 #endif

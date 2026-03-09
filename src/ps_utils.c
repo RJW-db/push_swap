@@ -24,10 +24,11 @@ void	free_linked_list(t_node *stack)
 	}
 }
 
-int	error_handling(t_node *full_stack)
+int	error_handling(t_swap *swap)
 {
 	safe_write(STDERR_FILENO, "Error\n", 6);
-	free_linked_list(full_stack);
+	free_linked_list(swap->a);
+	free_linked_list(swap->b);
 	return (EXIT_FAILURE);
 }
 
@@ -36,7 +37,7 @@ bool	check_if_sorted(t_node *linked_list)
 	int	previous_node_value;
 
 	if (linked_list == NULL || linked_list->next == NULL)
-		return (false);
+		return (true);
 	previous_node_value = linked_list->value;
 	linked_list = linked_list->next;
 	while (linked_list != NULL)

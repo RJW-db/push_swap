@@ -75,7 +75,7 @@ void	push_to_a(t_swap *s, t_node **b, t_node **a);
 
 //	ps_utils.c
 void	free_linked_list(t_node *lst);
-int		error_handling(t_node *full_stack);
+int		error_handling(t_swap *swap);
 bool	check_if_sorted(t_node *linked_list);
 void	three_or_less_nodes(t_node **a);
 void	set_current_to_zero(t_moves	*set);
