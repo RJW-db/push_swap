@@ -96,7 +96,6 @@ fclean: clean
 	@printf "$(REMOVED)" $(NAME) $(CUR_DIR)
 
 re:
-	$(MAKE) $(PRINT_NO_DIR) fclean -C $(EXT_LIB);
 	$(MAKE) $(PRINT_NO_DIR) fclean
 	$(MAKE) $(PRINT_NO_DIR) all
 
