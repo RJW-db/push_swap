@@ -77,6 +77,7 @@ $(BUILD_DIR)/%.o: %.c
 
 $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git:
 	git submodule update --init extern_libary/libftx
+	git -C $(EXT_LIB) checkout main
 	cd $(EXT_LIB) && git submodule update --init src/get_next_line
 	cd $(EXT_LIB)/src/get_next_line && \
 		git checkout $$(git config -f $(abspath $(EXT_LIB))/.gitmodules submodule.src/get_next_line.branch || echo main)
