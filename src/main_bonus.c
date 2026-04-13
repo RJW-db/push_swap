@@ -30,9 +30,9 @@ int	main(int argc, char **argv)
 	if (is_this_sorted == false || swap.b != NULL)
 	{
 		free_linked_list(swap.b);
-		safe_write(STDOUT_FILENO, "KO\n", 3);
+		SAFE_WRITE(STDOUT_FILENO, "KO\n", 3);
 		return (EXIT_FAILURE);
 	}
-	safe_write(STDOUT_FILENO, "OK\n", 3);
+	SAFE_WRITE(STDOUT_FILENO, "OK\n", 3);
 	return (EXIT_SUCCESS);
 }

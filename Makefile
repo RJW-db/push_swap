@@ -59,7 +59,7 @@ DELETE			:=	*.out			**/*.out			.DS_Store	\
 INCLUDES		:=	-I $(INC_DIR) -I $(EXT_INC)
 BUILD			:=	$(COMPILER) $(INCLUDES) $(CFLAGS)
 
-all: $(NAME)
+all: libftx_submodules $(NAME)
 
 $(OBJ) $(MOBJ) $(BOBJ): | $(LIBFTX_PATH)
 
@@ -75,6 +75,16 @@ $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(@D)
 	$(COMPILER) $(CFLAGS) -I $(INC_DIR) -I $(EXT_INC) -c $< -o $@
 
+# $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git:
+# 	git submodule update --init extern_libary/libftx
+# 	git -C $(EXT_LIB) checkout main
+# 	cd $(EXT_LIB) && git submodule update --init src/get_next_line
+# 	cd $(EXT_LIB)/src/get_next_line && \
+# 		git checkout $$(git config -f $(abspath $(EXT_LIB))/.gitmodules submodule.src/get_next_line.branch || echo main)
+
+# $(LIBFTX_PATH): | $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git
+# 	@$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) SUBMODULES_CMD= gnl $(LIB_A) $(filter debug valgrind,$(MAKECMDGOALS))
+
 $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git:
 	git submodule update --init extern_libary/libftx
 	git -C $(EXT_LIB) checkout main
@@ -83,7 +93,14 @@ $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git:
 		git checkout $$(git config -f $(abspath $(EXT_LIB))/.gitmodules submodule.src/get_next_line.branch || echo main)
 
 $(LIBFTX_PATH): | $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git
-	@$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) SUBMODULES_CMD= gnl $(LIB_A) $(filter debug,$(MAKECMDGOALS))
+	@$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) SUBMODULES_CMD= gnl $(LIB_A) $(filter debug valgrind,$(MAKECMDGOALS))
+
+# Optionally, keep this for broader submodule updates if you want:
+libftx_submodules:
+	@if [ -d "$(EXT_LIB)/.git" ]; then \
+		cd $(EXT_LIB) && git submodule update --init; \
+		cd $(EXT_LIB) && git submodule update --remote --merge; \
+	fi
 
 bonus: $(BNS_NAME)
 

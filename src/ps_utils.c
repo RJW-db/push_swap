@@ -26,7 +26,7 @@ void	free_linked_list(t_node *stack)
 
 int	error_handling(t_swap *swap)
 {
-	safe_write(STDERR_FILENO, "Error\n", 6);
+	SAFE_WRITE(STDERR_FILENO, "Error\n", 6);
 	free_linked_list(swap->a);
 	free_linked_list(swap->b);
 	return (EXIT_FAILURE);
