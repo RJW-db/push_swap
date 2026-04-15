@@ -97,17 +97,20 @@ Note: the bonus part is only evaluated if the mandatory part scores perfectly, i
 Build the static library:
 
 ```sh
-make        # build push_swap
-make bonus  # build checker
-make clean  # remove build artifacts
-make fclean # clean + remove push_swap checker (and extern deps)
-make re     # fclean + build
-make bre    # fclean + build + bonus
-make debug  # debug flags + sanitizers (per Makefile)
+make          # build push_swap
+make bonus    # build checker
+make clean    # remove build artifacts
+make fclean   # clean + remove push_swap checker (and extern deps)
+make re       # fclean + build
+make bre      # fclean + build + bonus
+make debug    # debug flags + sanitizers
+make valgrind # debug with valgrind (leaks and errors)
 ```
 
 
 ## Usage
+
+### Example: Run with 500 unique random numbers
 
 Sort a list of integers:
 
@@ -135,6 +138,14 @@ Validate the output with the provided checker:
 ARG="4 67 3 87 23"; ./push_swap $ARG | ./checker $ARG
 OK
 ```
+
+You can generate 500 unique random numbers and test your program with:
+
+```bash
+numbers=$(shuf -i 1-30000 -n 500); ./push_swap $numbers | ./checker $numbers
+```
+
+This will generate 500 different numbers between 1 and 30000, run `push_swap` with them, and check the result with `checker`.
 
 Already sorted input produces no output:
 
