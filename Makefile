@@ -44,13 +44,12 @@ SRC_DIR			:=	src
 INC_DIR			:=	include
 BUILD_DIR		:=	.build
 
-# Extern Library
+# Libftx
 EXT_DIR			:=	extern_libary
-EXT_LIB			:=	$(EXT_DIR)/libftx
-EXT_INC			:=	$(EXT_LIB)/$(INC_DIR)
-LIBFTX_OBJ_DIR	:=	$(BUILD_DIR)/libftx
-LIB_A			:=	libftx.a
-LIBFTX_PATH		:=	$(EXT_LIB)/$(LIB_A)
+LIBFTX_A		:=	libftx.a
+LIBFTX_DIR		:=	$(EXT_DIR)/libftx
+LIBFTX_INC		:=	$(LIBFTX_DIR)/$(INC_DIR)
+LIBFTX			:=	$(LIBFTX_DIR)/$(LIBFTX_A)
 
 SRC				:=	ps_nodes.c					ps_commands.c					ps_to_b.c	\
 					ps_to_b_2.c					ps_to_a.c						ps_utils.c	\
@@ -59,58 +58,52 @@ SRC				:=	ps_nodes.c					ps_commands.c					ps_to_b.c	\
 MANDATORY		:=	main.c
 BNS				:=	main_bonus.c				checker.c
 
-# Generate source file names
 SRC				:=	$(addprefix $(SRC_DIR)/, $(SRC))
 MSRC			:=	$(addprefix $(SRC_DIR)/, $(MANDATORY))
 BSRC			:=	$(addprefix $(SRC_DIR)/, $(BNS))
 
-# Generate object file names
 OBJ				:=	$(SRC:%.c=$(BUILD_DIR)/%.o)
 MOBJ			:=	$(MSRC:%.c=$(BUILD_DIR)/%.o)
 BOBJ			:=	$(BSRC:%.c=$(BUILD_DIR)/%.o)
 
-# Generate Dependency files
 DEPS			:=	$(OBJ:.o=.d) $(MOBJ:.o=.d) $(BOBJ:.o=.d)
 
 DELETE			:=	*.out			**/*.out			.DS_Store	\
 					**/.DS_Store	.dSYM/				**/.dSYM/
 
-INCLUDES		:=	-I $(INC_DIR) -I $(EXT_INC)
+INCLUDES		:=	-I $(INC_DIR) -I $(LIBFTX_INC)
 BUILD			:=	$(COMPILER) $(INCLUDES) $(CFLAGS)
 
-all: libftx_submodules $(NAME)
+all: $(NAME)
 
-bonus: libftx_submodules $(BNS_NAME)
+bonus: $(BNS_NAME)
 
 $(NAME): $(OBJ) $(MOBJ)
-	@$(BUILD) $(OBJ) $(MOBJ) $(EXT_LIB)/libftx.a -o $(NAME)
+	@$(BUILD) $(OBJ) $(MOBJ) $(LIBFTX) -o $(NAME)
 	@printf "$(CREATED)" $@ $(CUR_DIR)
 
 $(BNS_NAME): $(BOBJ) | $(NAME)
-	@$(BUILD) $(OBJ) $(BOBJ) $(EXT_LIB)/libftx.a -o $(BNS_NAME)
+	@$(BUILD) $(OBJ) $(BOBJ) $(LIBFTX) -o $(BNS_NAME)
 	@printf "$(CREATED)" $@ $(CUR_DIR)
 
-$(OBJ) $(MOBJ) $(BOBJ): | $(LIBFTX_PATH)
+$(OBJ) $(MOBJ) $(BOBJ): | $(LIBFTX)
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(@D)
-	$(COMPILER) $(CFLAGS) -I $(INC_DIR) -I $(EXT_INC) -c $< -o $@
+	$(COMPILER) $(CFLAGS) -I $(INC_DIR) -I $(LIBFTX_INC) -c $< -o $@
 
-$(EXT_LIB)/$(SRC_DIR)/get_next_line/.git:
-	git submodule update --init extern_libary/libftx
-	git -C $(EXT_LIB) checkout main
-	cd $(EXT_LIB) && git submodule update --init src/get_next_line
-	cd $(EXT_LIB)/src/get_next_line && \
-		git checkout $$(git config -f $(abspath $(EXT_LIB))/.gitmodules submodule.src/get_next_line.branch || echo main)
-
-$(LIBFTX_PATH): | $(EXT_LIB)/$(SRC_DIR)/get_next_line/.git
-	@$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) SUBMODULES_CMD= gnl $(LIB_A) $(filter debug valgrind,$(MAKECMDGOALS))
-
-libftx_submodules:
-	@if [ -d "$(EXT_LIB)/.git" ]; then \
-		cd $(EXT_LIB) && git submodule update --init; \
-		cd $(EXT_LIB) && git submodule update --remote --merge; \
+submodules:
+	@if [ ! -e "$(LIBFTX_DIR)/.git" ]; then																							\
+		git submodule update --init $(LIBFTX_DIR); 																					\
+		git -C $(LIBFTX_DIR) checkout $(shell git config -f .gitmodules submodule.$(LIBFTX_DIR).branch || echo main);				\
+		git submodule update --remote --merge $(LIBFTX_DIR)																			\
+		cd $(LIBFTX_DIR) && git submodule update --init $(SRC_DIR)/get_next_line;													\
+		cd $(LIBFTX_DIR)/$(SRC_DIR)/get_next_line &&																				\
+			git checkout $$(git config -f $(abspath $(LIBFTX_DIR))/.gitmodules submodule.src/get_next_line.branch || echo main);	\
 	fi
+
+$(LIBFTX): | submodules
+	@$(MAKE) $(PRINT_NO_DIR) -C $(LIBFTX_DIR) SUBMODULES_CMD= gnl $(filter debug valgrind,$(MAKECMDGOALS))
 
 clean:
 	@$(RM) $(BUILD_DIR) $(DELETE)
@@ -118,7 +111,7 @@ clean:
 
 fclean: clean
 	@$(RM) $(NAME) $(BNS_NAME)
-	@$(MAKE) $(PRINT_NO_DIR) -C $(EXT_LIB) fclean;
+	@$(MAKE) $(PRINT_NO_DIR) -C $(LIBFTX_DIR) fclean;
 	@printf "$(REMOVED)" $(NAME) $(CUR_DIR)
 
 re:
@@ -138,8 +131,8 @@ print-%:
 
 -include $(DEPS)
 
-.PHONY:	all bonus libftx_submodules	\
-		clean fclean re bre			\
+.PHONY:	all bonus submodules	\
+		clean fclean re bre		\
 		debug valgrind print-%
 
 # Terminal markup
