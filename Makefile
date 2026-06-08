@@ -45,7 +45,7 @@ INC_DIR			:=	include
 BUILD_DIR		:=	.build
 
 # Libftx
-EXT_DIR			:=	extern_libary
+EXT_DIR			:=	extern_library
 LIBFTX_A		:=	libftx.a
 LIBFTX_DIR		:=	$(EXT_DIR)/libftx
 LIBFTX_INC		:=	$(LIBFTX_DIR)/$(INC_DIR)
