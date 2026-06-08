@@ -48,8 +48,9 @@ BUILD_DIR		:=	.build
 EXT_DIR			:=	extern_library
 LIBFTX_A		:=	libftx.a
 LIBFTX_DIR		:=	$(EXT_DIR)/libftx
-LIBFTX_INC		:=	$(LIBFTX_DIR)/$(INC_DIR)
 LIBFTX			:=	$(LIBFTX_DIR)/$(LIBFTX_A)
+LIBFTX_INC		:=	$(LIBFTX_DIR)/$(INC_DIR)
+LIBFTX_SENTINEL :=  $(LIBFTX_DIR)/.git
 
 SRC				:=	ps_nodes.c					ps_commands.c					ps_to_b.c	\
 					ps_to_b_2.c					ps_to_a.c						ps_utils.c	\
@@ -92,17 +93,15 @@ $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(@D)
 	$(COMPILER) $(CFLAGS) -I $(INC_DIR) -I $(LIBFTX_INC) -c $< -o $@
 
-submodules:
-	@if [ ! -e "$(LIBFTX_DIR)/.git" ]; then																							\
-		git submodule update --init $(LIBFTX_DIR); 																					\
-		git -C $(LIBFTX_DIR) checkout $(shell git config -f .gitmodules submodule.$(LIBFTX_DIR).branch || echo main);				\
-		git submodule update --remote --merge $(LIBFTX_DIR)																			\
-		cd $(LIBFTX_DIR) && git submodule update --init $(SRC_DIR)/get_next_line;													\
-		cd $(LIBFTX_DIR)/$(SRC_DIR)/get_next_line &&																				\
-			git checkout $$(git config -f $(abspath $(LIBFTX_DIR))/.gitmodules submodule.src/get_next_line.branch || echo main);	\
-	fi
+$(LIBFTX_SENTINEL):
+	git submodule update --init $(LIBFTX_DIR)
+	git -C $(LIBFTX_DIR) checkout $(shell git config -f .gitmodules submodule.$(LIBFTX_DIR).branch || echo main)
+	git submodule update --remote --merge $(LIBFTX_DIR)
+	cd $(LIBFTX_DIR) && git submodule update --init $(SRC_DIR)/get_next_line
+	cd $(LIBFTX_DIR)/$(SRC_DIR)/get_next_line &&																			\
+		git checkout $$(git config -f $(abspath $(LIBFTX_DIR))/.gitmodules submodule.src/get_next_line.branch || echo main)
 
-$(LIBFTX): | submodules
+$(LIBFTX): | $(LIBFTX_SENTINEL)
 	@$(MAKE) $(PRINT_NO_DIR) -C $(LIBFTX_DIR) SUBMODULES_CMD= gnl $(filter debug valgrind,$(MAKECMDGOALS))
 
 clean:
@@ -131,7 +130,7 @@ print-%:
 
 -include $(DEPS)
 
-.PHONY:	all bonus submodules	\
+.PHONY:	all bonus				\
 		clean fclean re bre		\
 		debug valgrind print-%
 
