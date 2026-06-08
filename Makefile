@@ -102,7 +102,7 @@ $(LIBFTX_SENTINEL):
 		git checkout $$(git config -f $(abspath $(LIBFTX_DIR))/.gitmodules submodule.src/get_next_line.branch || echo main)
 
 $(LIBFTX): | $(LIBFTX_SENTINEL)
-	@$(MAKE) $(PRINT_NO_DIR) -C $(LIBFTX_DIR) SUBMODULES_CMD= gnl $(filter debug valgrind,$(MAKECMDGOALS))
+	@$(MAKE) $(PRINT_NO_DIR) -C $(LIBFTX_DIR) SUBMODULES_CMD= all gnl $(filter debug valgrind,$(MAKECMDGOALS))
 
 clean:
 	@$(RM) $(BUILD_DIR) $(DELETE)
